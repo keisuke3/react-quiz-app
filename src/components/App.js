@@ -1,53 +1,37 @@
 import React from 'react';
-import { Quiz } from './Quiz/Quiz';
-import { Button } from './Button/Button';
+import {
+  HashRouter as Router,
+  Route,
+} from 'react-router-dom';
+import styled from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
+import  { resetStyle, baseStyle } from '../utils/styles';
+import Quiz from './Quiz/Quiz';
+import Home from './Home/Home';
 
-const API_URL = 'https://opentdb.com/api.php?amount=10';
+const GlobalStyle = createGlobalStyle`
+  ${resetStyle}
+  ${baseStyle}
+`
 
-class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      loading: false,
-      quizData: [],
-    };
-  }
+function App() {
+  return (
+    <Root>
+      <GlobalStyle />
+      <Router>
+        <Route path='/' exact component={Home} />
+        <Route path='/quiz' exact component={Quiz} />
+      </Router>
+    </Root>
+  );
+};
 
-  async fetchData() {
-    this.setState({ loading: true });
-    let quizData;
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      quizData = data.results;
-    } catch (error) {
-      quizData = null;
-    }
-    this.setState({
-      quizData: quizData,
-      loading: false,
-    });
-  };
+const Root = styled.main`
+  margin: 0 auto;
+  padding-top: 30px;
+  text-align: center;
+  width: 80%;
+`
 
-  renderData() {
-
-  }
-
-  renderRequestButton() {
-    if (this.state.loading) {
-      return <Button>データを取得中</Button>
-    }
-    return <button onClick={ () => {this.fetchData()}}>データを取得する</button>
-  }
-
-  render() {
-    return (
-      <div className="App">
-        {this.renderRequestButton()}
-        <Quiz data={this.state.quizData} />
-      </div>
-    );
-  }
-}
 
 export default App;
